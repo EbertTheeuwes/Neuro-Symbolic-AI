@@ -54,10 +54,12 @@ class AdditionDataset(Dataset):
         self.dataset = datasets[subset]
 
     def __len__(self):
-        return len(self.dataset) #// 6
+        return len(self.dataset) // 3
 
     def to_query(self, i: int) -> Query:
-        image1 = Term("tensor", Term(self.subset, Constant(i)))
+        image1 = Term("tensor", Term(self.subset, Constant(i * 3)))
+        image2 = Term("tensor", Term(self.subset, Constant(i * 3 + 1)))
+        image3 = Term("tensor", Term(self.subset, Constant(i * 3 + 2)))
         #image1 = Term("tensor", Term(self.subset, Constant(i * 6)))
         #image2 = Term("tensor", Term(self.subset, Constant(i * 6 + 1)))
         #image3 = Term("tensor", Term(self.subset, Constant(i * 6 + 2)))
@@ -73,7 +75,11 @@ class AdditionDataset(Dataset):
         #label = Constant(int(self.dataset[i*6][1]) + int(self.dataset[i*6][1]) + int(self.dataset[i*6][1]) +
         #    int(self.dataset[i*6][1]) + int(self.dataset[i*6 + 1][1]) + int(self.dataset[i*6 + 2][1]) +
         #    int(self.dataset[i*6 + 3][1]) + int(self.dataset[i*6 + 4][1]) + int(self.dataset[i*6 + 5][1]))
-        label = Constant(int(self.dataset[i][1]))
+        #label = Constant(int(self.dataset[i][1]))
+        if checkgrid([int(self.dataset[i*3][1]), int(self.dataset[i*3 + 1][1]), int(self.dataset[i*3 + 2][1])]) == False:
+            label = Constant(int(0))
+        else:
+            label = Constant(int(self.dataset[i*3][1]))
         #label = Constant(int(self.dataset[i*6][1]))
         #label = Constant(int(self.dataset[i*6][1] + int(self.dataset[i*6 + 1][1])))
         #term = Term('addition', image1, image2, label)
@@ -81,10 +87,18 @@ class AdditionDataset(Dataset):
         #term = Term('check', image1, image1, image1, image1, image2, image3, image4, image5, image6, label)
         #term = Term('add', image1, image1, image1, image1, image2, image3, image4, image5, image6, label)
         #term = Term('evenOrOdd', image1, label)
-        term = Term('idd', image1, label)
+        term = Term('check1x3grid', image1, image2, image3, label)
         #term = Term('add3', image1, image2, image3, label)
         #term = Term('labelnum', image1, label)
         #print(image1)
         #print(image2)
         #print(label)
         return Query(term)
+
+# grid is van vorm: [A1,A2,A3]
+def checkgrid(grid):
+    first = grid[0]
+    for i in range(len(grid)):
+        if first != grid[i]:
+            return False
+    return first

@@ -1,5 +1,5 @@
 % kans van symbool
-nn(mnist_net,[X],Y,[0,1,2,3,4,5,6,7,8,9]) :: digit(X,Y).
+nn(mnist_net,[X],Y,[5,9]) :: digit(X,Y).
 
 % idempotent
 idd(X,Y) :- digit(X,Y).
@@ -35,7 +35,7 @@ board([
 % definieer de spelers
 %players([x,o]).
 %players([0,1,2,3,4,5,6,7,8,9]).
-players([0,1]).
+players([0,5,9]).
 
 % een speler heeft gewonnen als er drie symbolen van die speler op een rij staan
 win(Player,Board) :-
@@ -49,7 +49,9 @@ win(Player,Board) :-
     Board = [ [_,_,Player], [_,_,Player], [_,_,Player] ];
     % controleer diagonale lijnen
     Board = [ [Player,_,_], [_,Player,_], [_,_,Player] ];
-    Board = [ [_,_,Player], [_,Player,_], [Player,_,_] ].
+    Board = [ [_,_,Player], [_,Player,_], [Player,_,_] ],!.
+
+win(0,_).
 
 % controleer of het spel is beëindigd (door te kijken of het bord vol is of als een speler heeft gewonnen)
 %game_over(Board,/) :-
@@ -68,3 +70,7 @@ check(A1,A2,A3,B1,B2,B3,C1,C2,C3,Winner) :-
     evenOrOdd(B1,BR1), evenOrOdd(B2,BR2), evenOrOdd(B3,BR3),
     evenOrOdd(C1,CR1), evenOrOdd(C2,CR2), evenOrOdd(C3,CR3),
     game_over([[AR1,AR2,AR3],[BR1,BR2,BR3],[CR1,CR2,CR3]],Winner).
+
+check1x3grid(A1,A2,A3,Winner) :-
+    digit(A1,AR1), digit(A2,AR2), digit(A3,AR3),
+    game_over([[AR1,AR2,AR3],[-,-,-],[-,-,-]],Winner).
