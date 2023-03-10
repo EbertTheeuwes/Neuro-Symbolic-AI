@@ -7,6 +7,7 @@ from deepproblog.model import Model
 from deepproblog.network import Network
 from deepproblog.train import train_model
 from network import MNIST_Net
+from deepproblog.evaluate import get_confusion_matrix
 
 network = MNIST_Net()
 net = Network(network, "mnist_net", batching=True)
@@ -22,8 +23,16 @@ testset = AdditionDataset("test")
 
 # Train the model
 loader = DataLoader(dataset, 2, False)
-train_model(model, loader, 1, log_iter=100, profile=0)
+train = train_model(model, loader, 1, log_iter=100, profile=0)
 model.save_state("snapshot/trained_model.pth")
+#train.logger.comment(dumps(model.get_hyperparameters()))
+train.logger.comment(
+    "Accuracy {}".format(get_confusion_matrix(model, testset, verbose=1).accuracy())
+)
+train.logger.comment(
+    "Confusion Matrix {}".format(get_confusion_matrix(model, testset, verbose=1))
+)
+train.logger.write_to_file("log/" + 'test')
 
 # Query the model
 for i in range(len(testset)):
