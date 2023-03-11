@@ -54,18 +54,19 @@ class AdditionDataset(Dataset):
         self.dataset = datasets[subset]
 
     def __len__(self):
-        return len(self.dataset) // 3
+        return len(self.dataset) // 6
 
     def to_query(self, i: int) -> Query:
-        image1 = Term("tensor", Term(self.subset, Constant(i * 3)))
-        image2 = Term("tensor", Term(self.subset, Constant(i * 3 + 1)))
-        image3 = Term("tensor", Term(self.subset, Constant(i * 3 + 2)))
-        #image1 = Term("tensor", Term(self.subset, Constant(i * 6)))
-        #image2 = Term("tensor", Term(self.subset, Constant(i * 6 + 1)))
-        #image3 = Term("tensor", Term(self.subset, Constant(i * 6 + 2)))
-        #image4 = Term("tensor", Term(self.subset, Constant(i * 6 + 3)))
-        #image5 = Term("tensor", Term(self.subset, Constant(i * 6 + 4)))
-        #image6 = Term("tensor", Term(self.subset, Constant(i * 6 + 5)))
+        #print(i)
+        #image1 = Term("tensor", Term(self.subset, Constant(i * 3)))
+        #image2 = Term("tensor", Term(self.subset, Constant(i * 3 + 1)))
+        #image3 = Term("tensor", Term(self.subset, Constant(i * 3 + 2)))
+        image1 = Term("tensor", Term(self.subset, Constant(i * 6)))
+        image2 = Term("tensor", Term(self.subset, Constant(i * 6 + 1)))
+        image3 = Term("tensor", Term(self.subset, Constant(i * 6 + 2)))
+        image4 = Term("tensor", Term(self.subset, Constant(i * 6 + 3)))
+        image5 = Term("tensor", Term(self.subset, Constant(i * 6 + 4)))
+        image6 = Term("tensor", Term(self.subset, Constant(i * 6 + 5)))
         #label = Constant(int(self.dataset[i*6][1]))
         #if int(self.dataset[i*6][1]) % 2 == 0:
         #    label = Constant(int(0))
@@ -76,10 +77,18 @@ class AdditionDataset(Dataset):
         #    int(self.dataset[i*6][1]) + int(self.dataset[i*6 + 1][1]) + int(self.dataset[i*6 + 2][1]) +
         #    int(self.dataset[i*6 + 3][1]) + int(self.dataset[i*6 + 4][1]) + int(self.dataset[i*6 + 5][1]))
         #label = Constant(int(self.dataset[i][1]))
-        if checkgrid([int(self.dataset[i*3][1]), int(self.dataset[i*3 + 1][1]), int(self.dataset[i*3 + 2][1])]) == False:
+        #result = checkgrid1([int(self.dataset[i*3][1]), int(self.dataset[i*3 + 1][1]), int(self.dataset[i*3 + 2][1])])
+        #if result == False:
+        #    label = Constant(int(0))
+        #else:
+        #    label = Constant(result)
+        result = checkgrid2(
+            [int(self.dataset[i * 6][1]), int(self.dataset[i * 6 + 1][1]), int(self.dataset[i * 6 + 2][1])],
+            [int(self.dataset[i * 6 + 3][1]), int(self.dataset[i * 6 + 4][1]), int(self.dataset[i * 6 + 5][1])])
+        if result == False:
             label = Constant(int(0))
         else:
-            label = Constant(int(self.dataset[i*3][1]))
+            label = Constant(result)
         #label = Constant(int(self.dataset[i*6][1]))
         #label = Constant(int(self.dataset[i*6][1] + int(self.dataset[i*6 + 1][1])))
         #term = Term('addition', image1, image2, label)
@@ -87,7 +96,8 @@ class AdditionDataset(Dataset):
         #term = Term('check', image1, image1, image1, image1, image2, image3, image4, image5, image6, label)
         #term = Term('add', image1, image1, image1, image1, image2, image3, image4, image5, image6, label)
         #term = Term('evenOrOdd', image1, label)
-        term = Term('check1x3grid', image1, image2, image3, label)
+        #term = Term('check1x3grid', image1, image2, image3, label)
+        term = Term('check2x3grid', image1, image2, image3, image4, image5, image6, label)
         #term = Term('add3', image1, image2, image3, label)
         #term = Term('labelnum', image1, label)
         #print(image1)
@@ -96,9 +106,20 @@ class AdditionDataset(Dataset):
         return Query(term)
 
 # grid is van vorm: [A1,A2,A3]
-def checkgrid(grid):
+def checkgrid1(grid):
     first = grid[0]
     for i in range(len(grid)):
         if first != grid[i]:
             return False
     return first
+
+def checkgrid2(row1, row2):
+    results = []
+    results += [checkgrid1(row1)]
+    results += [checkgrid1(row2)]
+    if 5 in results:
+        return 5
+    elif 9 in results:
+        return 9
+    else:
+        return False
