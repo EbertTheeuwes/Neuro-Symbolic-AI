@@ -7,7 +7,7 @@ from deepproblog.model import Model
 from deepproblog.network import Network
 from deepproblog.train import train_model
 from network import MNIST_Net
-from deepproblog.evaluate import get_confusion_matrix
+from deepproblog.evaluate import get_confusion_matrix, get_fact_accuracy
 
 network = MNIST_Net()
 net = Network(network, "mnist_net", batching=True)
@@ -31,6 +31,12 @@ train.logger.comment(
 )
 train.logger.comment(
     "Confusion Matrix {}".format(get_confusion_matrix(model, testset, verbose=1))
+)
+train.logger.comment(
+    "Fact accuracy {}".format(get_fact_accuracy(model, testset, verbose=1))
+)
+train.logger.comment(
+    "Fact accuracy {}".format(get_fact_accuracy(model, testset, verbose=1).accuracy())
 )
 train.logger.write_to_file("log/" + 'test')
 

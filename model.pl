@@ -35,11 +35,14 @@ board([
 % definieer de spelers
 %players([x,o]).
 %players([0,1,2,3,4,5,6,7,8,9]).
-players([0,5,9]).
+players([5,9]).
 
 % een speler heeft gewonnen als er drie symbolen van die speler op een rij staan
 win(Player,Board) :-
+    players(Players),
+    member(Player,Players),
     % controleer horizontale lijnen
+    (
     Board = [ [Player,Player,Player], _, _ ];
     Board = [ _, [Player,Player,Player], _ ];
     Board = [ _, _, [Player,Player,Player] ];
@@ -49,9 +52,11 @@ win(Player,Board) :-
     Board = [ [_,_,Player], [_,_,Player], [_,_,Player] ];
     % controleer diagonale lijnen
     Board = [ [Player,_,_], [_,Player,_], [_,_,Player] ];
-    Board = [ [_,_,Player], [_,Player,_], [Player,_,_] ],!.
+    Board = [ [_,_,Player], [_,Player,_], [Player,_,_] ]
+    ).
 
-win(0,_).
+no_win(0,Board) :-
+    \+ win(_,Board).
 
 % controleer of het spel is beëindigd (door te kijken of het bord vol is of als een speler heeft gewonnen)
 %game_over(Board,/) :-
@@ -59,9 +64,7 @@ win(0,_).
 %    \+ member(-, FlatBoard).
 
 game_over(Board,Winner) :-
-    players(Players),
-    member(Winner,Players),
-    win(Winner,Board).
+    win(Winner,Board);no_win(Winner,Board).
 
 % check
 %check([[A1,A2,A3],[B1,B2,B3],[C1,C2,C3]],Winner) :-
