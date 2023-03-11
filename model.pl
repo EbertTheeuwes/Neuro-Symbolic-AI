@@ -87,3 +87,9 @@ check2x3grid(A1,A2,A3,B1,B2,B3,Winner) :-
     digit(A1,AR1), digit(A2,AR2), digit(A3,AR3),
     digit(B1,BR1), digit(B2,BR2), digit(B3,BR3),
     game_over([[AR1,AR2,AR3],[BR1,BR2,BR3],[-,-,-]],Winner).
+
+check3x3grid(A1,A2,A3,B1,B2,B3,C1,C2,C3,Winner) :-
+    digit(A1,AR1), digit(A2,AR2), digit(A3,AR3),
+    digit(B1,BR1), digit(B2,BR2), digit(B3,BR3),
+    digit(C1,CR1), digit(C2,CR2), digit(C3,CR3),
+    game_over([[AR1,AR2,AR3],[BR1,BR2,BR3],[CR1,CR2,CR3]],Winner).
