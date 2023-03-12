@@ -54,7 +54,7 @@ class AdditionDataset(Dataset):
         self.dataset = datasets[subset]
 
     def __len__(self):
-        return len(self.dataset) // 9
+        return len(self.dataset) // 4
 
     def to_query(self, i: int) -> Query:
         #print(i)
@@ -67,15 +67,28 @@ class AdditionDataset(Dataset):
         #image4 = Term("tensor", Term(self.subset, Constant(i * 6 + 3)))
         #image5 = Term("tensor", Term(self.subset, Constant(i * 6 + 4)))
         #image6 = Term("tensor", Term(self.subset, Constant(i * 6 + 5)))
-        image1 = Term("tensor", Term(self.subset, Constant(i * 9)))
-        image2 = Term("tensor", Term(self.subset, Constant(i * 9 + 1)))
-        image3 = Term("tensor", Term(self.subset, Constant(i * 9 + 2)))
-        image4 = Term("tensor", Term(self.subset, Constant(i * 9 + 3)))
-        image5 = Term("tensor", Term(self.subset, Constant(i * 9 + 4)))
-        image6 = Term("tensor", Term(self.subset, Constant(i * 9 + 5)))
-        image7 = Term("tensor", Term(self.subset, Constant(i * 9 + 6)))
-        image8 = Term("tensor", Term(self.subset, Constant(i * 9 + 7)))
-        image9 = Term("tensor", Term(self.subset, Constant(i * 9 + 8)))
+        #image1 = Term("tensor", Term(self.subset, Constant(i * 9)))
+        #image2 = Term("tensor", Term(self.subset, Constant(i * 9 + 1)))
+        #image3 = Term("tensor", Term(self.subset, Constant(i * 9 + 2)))
+        #image4 = Term("tensor", Term(self.subset, Constant(i * 9 + 3)))
+        #image5 = Term("tensor", Term(self.subset, Constant(i * 9 + 4)))
+        #image6 = Term("tensor", Term(self.subset, Constant(i * 9 + 5)))
+        #image7 = Term("tensor", Term(self.subset, Constant(i * 9 + 6)))
+        #image8 = Term("tensor", Term(self.subset, Constant(i * 9 + 7)))
+        #image9 = Term("tensor", Term(self.subset, Constant(i * 9 + 8)))
+        #image1 = Term("tensor", Term(self.subset, Constant(i)))
+        #image2 = Term("tensor", Term(self.subset, Constant(i + 1)))
+        #image3 = Term("tensor", Term(self.subset, Constant(i + 2)))
+        #image4 = Term("tensor", Term(self.subset, Constant(i + 3)))
+        #image5 = Term("tensor", Term(self.subset, Constant(i + 4)))
+        #image6 = Term("tensor", Term(self.subset, Constant(i + 5)))
+        #image7 = Term("tensor", Term(self.subset, Constant(i + 6)))
+        #image8 = Term("tensor", Term(self.subset, Constant(i + 7)))
+        #image9 = Term("tensor", Term(self.subset, Constant(i + 8)))
+        image1 = Term("tensor", Term(self.subset, Constant(i * 4)))
+        image2 = Term("tensor", Term(self.subset, Constant(i * 4 + 1)))
+        image3 = Term("tensor", Term(self.subset, Constant(i * 4 + 2)))
+        image4 = Term("tensor", Term(self.subset, Constant(i * 4 + 3)))
         #label = Constant(int(self.dataset[i*6][1]))
         #if int(self.dataset[i*6][1]) % 2 == 0:
         #    label = Constant(int(0))
@@ -98,14 +111,25 @@ class AdditionDataset(Dataset):
         #    label = Constant(int(0))
         #else:
         #    label = Constant(result)
-        result = checkgrid3(
-            [int(self.dataset[i * 9][1]), int(self.dataset[i * 9 + 1][1]), int(self.dataset[i * 9 + 2][1])],
-            [int(self.dataset[i * 9 + 3][1]), int(self.dataset[i * 9 + 4][1]), int(self.dataset[i * 9 + 5][1])],
-            [int(self.dataset[i * 9 + 6][1]), int(self.dataset[i * 9 + 7][1]), int(self.dataset[i * 9 + 8][1])])
+        #result = checkgrid3(
+        #    [int(self.dataset[i * 9][1]), int(self.dataset[i * 9 + 1][1]), int(self.dataset[i * 9 + 2][1])],
+        #    [int(self.dataset[i * 9 + 3][1]), int(self.dataset[i * 9 + 4][1]), int(self.dataset[i * 9 + 5][1])],
+        #    [int(self.dataset[i * 9 + 6][1]), int(self.dataset[i * 9 + 7][1]), int(self.dataset[i * 9 + 8][1])])
+        #result = checkgrid3(
+        #    [int(self.dataset[i][1]), int(self.dataset[i + 1][1]), int(self.dataset[i + 2][1])],
+        #    [int(self.dataset[i + 3][1]), int(self.dataset[i + 4][1]), int(self.dataset[i + 5][1])],
+        #    [int(self.dataset[i + 6][1]), int(self.dataset[i + 7][1]), int(self.dataset[i + 8][1])])
+        #if result == False:
+        #    label = Constant(int(0))
+        #else:
+        #    label = Constant(result)
+        result = checkgrid22(
+            [int(self.dataset[i * 4][1]), int(self.dataset[i * 4 + 1][1])],
+            [int(self.dataset[i * 4 + 2][1]), int(self.dataset[i * 4 + 3][1])])
         if result == False:
             label = Constant(int(0))
         else:
-            label = Constant(result)
+            label = Constant(int(result))
         #label = Constant(int(self.dataset[i*6][1]))
         #label = Constant(int(self.dataset[i*6][1] + int(self.dataset[i*6 + 1][1])))
         #term = Term('addition', image1, image2, label)
@@ -115,7 +139,8 @@ class AdditionDataset(Dataset):
         #term = Term('evenOrOdd', image1, label)
         #term = Term('check1x3grid', image1, image2, image3, label)
         #term = Term('check2x3grid', image1, image2, image3, image4, image5, image6, label)
-        term = Term('check3x3grid', image1, image2, image3, image4, image5, image6, image7, image8, image9, label)
+        #term = Term('check3x3grid', image1, image2, image3, image4, image5, image6, image7, image8, image9, label)
+        term = Term('check2x2grid', image1, image2, image3, image4, label)
         #term = Term('add3', image1, image2, image3, label)
         #term = Term('labelnum', image1, label)
         #print(image1)
@@ -152,6 +177,21 @@ def checkgrid3(row1, row2, row3):
     results += [checkgrid1([row1[2], row2[2], row3[2]])]
     results += [checkgrid1([row1[0], row2[1], row3[2]])]
     results += [checkgrid1([row1[2], row2[1], row3[0]])]
+    if 5 in results:
+        return 5
+    elif 9 in results:
+        return 9
+    else:
+        return False
+
+def checkgrid22(row1, row2):
+    results = []
+    results += [checkgrid1(row1)]
+    results += [checkgrid1(row2)]
+    results += [checkgrid1([row1[0], row2[0]])]
+    results += [checkgrid1([row1[1], row2[1]])]
+    results += [checkgrid1([row1[0], row2[1]])]
+    results += [checkgrid1([row1[1], row2[0]])]
     if 5 in results:
         return 5
     elif 9 in results:
