@@ -17,7 +17,7 @@ class MNIST_Net(nn.Module):
             nn.ReLU(),
             nn.Linear(120, 84),
             nn.ReLU(),
-            nn.Linear(84, 10),
+            nn.Linear(84, 2),
             nn.Softmax(1),
         )
 

@@ -14,6 +14,7 @@ transform = transforms.Compose(
 full_mnist_trainset = torchvision.datasets.MNIST(root='data/', train=True, download=True, transform=transform)
 full_mnist_testset = torchvision.datasets.MNIST(root='data/', train=False, download=True, transform=transform)
 
+# Stel trainset en testset op voor 5 en 9
 mnist_trainset = []
 for i in range(len(full_mnist_trainset)):
     if int(full_mnist_trainset[i][1]) == 5 or int(full_mnist_trainset[i][1]) == 9:
@@ -23,10 +24,27 @@ for i in range(len(full_mnist_testset)):
     if int(full_mnist_testset[i][1]) == 5 or int(full_mnist_testset[i][1]) == 9:
         mnist_testset += [full_mnist_testset[i]]
 
+# Stel trainset en testset op voor 0 en 1
+mnist_trainset01 = []
+for i in range(len(full_mnist_trainset)):
+    if int(full_mnist_trainset[i][1]) == 0 or int(full_mnist_trainset[i][1]) == 1:
+        mnist_trainset01 += [full_mnist_trainset[i]]
+mnist_testset01 = []
+for i in range(len(full_mnist_testset)):
+    if int(full_mnist_testset[i][1]) == 0 or int(full_mnist_testset[i][1]) == 1:
+        mnist_testset01 += [full_mnist_testset[i]]
+
+#random.shuffle(mnist_trainset01)
+#random.shuffle(mnist_testset01)
 datasets = {
-    "train": mnist_trainset,
-    "test": mnist_testset,
+    #"train": mnist_trainset,
+    #"test": mnist_testset,
+    "train": mnist_trainset01,
+    "test": mnist_testset01,
 }
+
+numbers = [0, 1] #[5,9]
+neutral_number = 2#0
 
 
 class MNISTImages(Mapping[Term, torch.Tensor]):
@@ -60,10 +78,10 @@ class AdditionDataset(Dataset):
         image2 = Term("tensor", Term(self.subset, Constant(i * 3 + 1)))
         image3 = Term("tensor", Term(self.subset, Constant(i * 3 + 2)))
         result = checkgrid1([int(self.dataset[i*3][1]), int(self.dataset[i*3 + 1][1]), int(self.dataset[i*3 + 2][1])])
-        if result == False:
-           label = Constant(int(0))
+        if result == 'No':
+           label = Constant(int(neutral_number))
         else:
-           label = Constant(result)
+           label = Constant(int(result))
         term = Term('check1x3grid', image1, image2, image3, label)
         return Query(term)
 
@@ -77,8 +95,8 @@ class AdditionDataset(Dataset):
         result = checkgrid2(
            [int(self.dataset[i * 6][1]), int(self.dataset[i * 6 + 1][1]), int(self.dataset[i * 6 + 2][1])],
            [int(self.dataset[i * 6 + 3][1]), int(self.dataset[i * 6 + 4][1]), int(self.dataset[i * 6 + 5][1])])
-        if result == False:
-           label = Constant(int(0))
+        if result == 'No':
+           label = Constant(int(neutral_number))
         else:
            label = Constant(result)
         term = Term('check2x3grid', image1, image2, image3, image4, image5, image6, label)
@@ -92,8 +110,8 @@ class AdditionDataset(Dataset):
         result = checkgrid22(
            [int(self.dataset[i * 4][1]), int(self.dataset[i * 4 + 1][1])],
            [int(self.dataset[i * 4 + 2][1]), int(self.dataset[i * 4 + 3][1])])
-        if result == False:
-           label = Constant(int(0))
+        if result == 'No':
+           label = Constant(int(neutral_number))
         else:
            label = Constant(int(result))
         term = Term('check2x2grid', image1, image2, image3, image4, label)
@@ -126,8 +144,8 @@ class AdditionDataset(Dataset):
            [int(self.dataset[i][1]), int(self.dataset[i + 1][1]), int(self.dataset[i + 2][1])],
            [int(self.dataset[i + 3][1]), int(self.dataset[i + 4][1]), int(self.dataset[i + 5][1])],
            [int(self.dataset[i + 6][1]), int(self.dataset[i + 7][1]), int(self.dataset[i + 8][1])])
-        if result == False:
-           label = Constant(int(0))
+        if result == 'No':
+           label = Constant(int(neutral_number))
         else:
            label = Constant(result)
         term = Term('check3x3grid', image1, image2, image3, image4, image5, image6, image7, image8, image9, label)
@@ -143,20 +161,20 @@ class AdditionDataset(Dataset):
 def checkgrid1(grid):
     first = grid[0]
     for i in range(len(grid)):
-        if first != grid[i]:
-            return False
+        if int(first) != int(grid[i]):
+            return 'No'
     return first
 
 def checkgrid2(row1, row2):
     results = []
     results += [checkgrid1(row1)]
     results += [checkgrid1(row2)]
-    if 5 in results:
-        return 5
-    elif 9 in results:
-        return 9
+    if numbers[0] in results:
+        return numbers[0]
+    elif numbers[1] in results:
+        return numbers[1]
     else:
-        return False
+        return 'No'
 
 def checkgrid3(row1, row2, row3):
     results = []
@@ -168,12 +186,12 @@ def checkgrid3(row1, row2, row3):
     results += [checkgrid1([row1[2], row2[2], row3[2]])]
     results += [checkgrid1([row1[0], row2[1], row3[2]])]
     results += [checkgrid1([row1[2], row2[1], row3[0]])]
-    if 5 in results:
-        return 5
-    elif 9 in results:
-        return 9
+    if numbers[0] in results:
+        return numbers[0]
+    elif numbers[1] in results:
+        return numbers[1]
     else:
-        return False
+        return 'No'
 
 def checkgrid22(row1, row2):
     results = []
@@ -183,9 +201,9 @@ def checkgrid22(row1, row2):
     results += [checkgrid1([row1[1], row2[1]])]
     results += [checkgrid1([row1[0], row2[1]])]
     results += [checkgrid1([row1[1], row2[0]])]
-    if 5 in results:
-        return 5
-    elif 9 in results:
-        return 9
+    if numbers[0] in results:
+        return numbers[0]
+    elif numbers[1] in results:
+        return numbers[1]
     else:
-        return False
+        return 'No'
