@@ -1,5 +1,5 @@
 % kans van symbool
-nn(mnist_net,[X],Y,[5,9]) :: digit(X,Y).
+nn(mnist_net,[X],Y,[0,1]) :: digit(X,Y).
 
 % definieer het bord
 board([
@@ -9,33 +9,33 @@ board([
 ]).
 
 % definieer de spelers
-players([5,9]).
+players([0,1]).
 
 % kijk na of specifiek getal gewonnen heeft
-win5(5,Board) :-
-    win(5,Board).
-win9(9,Board) :-
-    \+ win(5,Board),
-    win(9,Board).
-no_win(0,Board) :-
+win0(0,Board) :-
+    win(0,Board).
+win1(1,Board) :-
+    \+ win(0,Board),
+    win(1,Board).
+no_win(2,Board) :-
     \+ win(_,Board).
 
 % speciaal geval voor 2x2 grid
-win25(5,Board) :-
-    win22(5,Board).
-win29(9,Board) :-
-    \+ win22(5,Board),
-    win22(9,Board).
-no_win2(0,Board) :-
+win20(0,Board) :-
+    win22(0,Board).
+win21(1,Board) :-
+    \+ win22(0,Board),
+    win22(1,Board).
+no_win2(2,Board) :-
     \+ win22(_,Board).
 
 % speciaal geval voor 4x4 grid
-win45(5,Board) :-
-    win44(5,Board).
-win49(9,Board) :-
-    \+ win44(5,Board),
-    win44(9,Board).
-no_win4(0,Board) :-
+win40(0,Board) :-
+    win44(0,Board).
+win41(1,Board) :-
+    \+ win44(0,Board),
+    win44(1,Board).
+no_win4(2,Board) :-
     \+ win44(_,Board).
 
 % een speler heeft gewonnen als er drie symbolen van die speler op een rij staan
@@ -95,15 +95,15 @@ win44(Player,Board) :-
 
 % bepaal uitslag van het spel
 game_over(Board,Winner) :-
-    win5(Winner,Board);win9(Winner,Board);no_win(Winner,Board).
+    win0(Winner,Board);win1(Winner,Board);no_win(Winner,Board).
 
 % speciaal voor 2x2 grid
 game_over22(Board,Winner) :-
-    win25(Winner,Board);win29(Winner,Board);no_win2(Winner,Board).
+    win20(Winner,Board);win21(Winner,Board);no_win2(Winner,Board).
 
 % speciaal voor 4x4 grid
 game_over44(Board,Winner) :-
-    win45(Winner,Board);win49(Winner,Board);no_win4(Winner,Board).
+    win40(Winner,Board);win41(Winner,Board);no_win4(Winner,Board).
 
 % check
 check1x3grid(A1,A2,A3,Winner) :-
