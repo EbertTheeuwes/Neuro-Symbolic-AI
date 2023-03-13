@@ -1,9 +1,9 @@
 import torch
 from torch import nn
-from data import TictactoeDataset
+from data import TictactoeDatasetCat, TictactoeDatasetSep
 
 
-class Neuralbaseline(nn.Module):
+class NeuralbaselineCat(nn.Module):
     def __init__(self):
         super().__init__()
         self.encoder = nn.Sequential(
@@ -15,7 +15,9 @@ class Neuralbaseline(nn.Module):
             nn.ReLU(True),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(16 * 4 * 18, 500),
+            nn.Linear(16 * 4 * 18, 750),
+            nn.ReLU(),
+            nn.Linear(750, 500),
             nn.ReLU(),
             nn.Linear(500, 300),
             nn.ReLU(),
@@ -28,21 +30,47 @@ class Neuralbaseline(nn.Module):
         )
 
     def forward(self, x):
-        # x1 = self.encoder(x[0])
-        # x2 = self.encoder(x[1])
-        # x3 = self.encoder(x[2])
-
-        # x1 = x1.view(-1, 16 * 4 * 4)
-        # x2 = x2.view(-1, 16 * 4 * 4)
-        # x3 = x3.view(-1, 16 * 4 * 4)
-
-        # x = x1 + x2 + x3
-
         x = self.encoder(x)
         x = x.view(-1, 16 * 4 * 18)
         x = self.classifier(x)
         x = torch.squeeze(x)
         return x
+
+class NeuralbaselineSep(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.encoder = nn.Sequential(
+            nn.Conv2d(1,6,5),
+            nn.MaxPool2d(2,2),
+            nn.ReLU(True),
+            nn.Conv2d(6,16,5),
+            nn.MaxPool2d(2,2),
+            nn.ReLU(True),
+        )
+        self.classifier = nn.Sequential(
+            nn.Linear(16 * 4 * 4 * 3, 300),
+            nn.ReLU(),
+            nn.Linear(300, 140),
+            nn.ReLU(),
+            nn.Linear(140, 90),
+            nn.ReLU(),
+            nn.Linear(90, 3),
+            nn.Softmax(1),
+        )
+
+    def forward(self, x, y, z):
+        x = self.encoder(x)
+        y = self.encoder(y)
+        z = self.encoder(z)
+
+        x = x.view(-1, 16 * 4 * 4)
+        y = y.view(-1, 16 * 4 * 4)
+        z = z.view(-1, 16 * 4 * 4)
+
+        x = torch.cat((x, y, z), 1)
+        x = self.classifier(x)
+
+        return torch.squeeze(x)
 
 
 
