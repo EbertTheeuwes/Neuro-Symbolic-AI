@@ -233,4 +233,4 @@ check4x4grid(A1,A2,A3,A4,B1,B2,B3,B4,C1,C2,C3,C4,D1,D2,D3,D4,Winner) :-
     digit(B1,BR1), digit(B2,BR2), digit(B3,BR3), digit(B4,BR4),
     digit(C1,CR1), digit(C2,CR2), digit(C3,CR3), digit(C4,CR4),
     digit(D1,DR1), digit(D2,DR2), digit(D3,DR3), digit(D4,DR4),
-    game_over44([[AR1,AR2,AR3,AR4],[BR
+    game_over44([[AR1,AR2,AR3,AR4],[BR1,BR2,BR3,BR4],[CR1,CR2,CR3,CR4],[DR1,DR2,DR3,DR4]],Winner).
