@@ -75,6 +75,46 @@ win25(5,Board) :-
 win29(9,Board) :-
     \+ win22(5,Board),
     win22(9,Board).
+win23(3,Board) :-
+    \+ win22(5,Board),
+    \+ win22(9,Board),
+    \+ win22(1,Board),
+    \+ win22(2,Board),
+    win22(3,Board).
+win24(4,Board) :-
+    \+ win22(5,Board),
+    \+ win22(9,Board),
+    \+ win22(1,Board),
+    \+ win22(2,Board),
+    \+ win22(3,Board),
+    win22(4,Board).
+win26(6,Board) :-
+    \+ win22(5,Board),
+    \+ win22(9,Board),
+    \+ win22(1,Board),
+    \+ win22(2,Board),
+    \+ win22(3,Board),
+    \+ win22(4,Board),
+    win22(6,Board).
+win27(7,Board) :-
+    \+ win22(5,Board),
+    \+ win22(9,Board),
+    \+ win22(1,Board),
+    \+ win22(2,Board),
+    \+ win22(3,Board),
+    \+ win22(4,Board),
+    \+ win22(6,Board),
+    win22(7,Board).
+win28(8,Board) :-
+    \+ win22(5,Board),
+    \+ win22(9,Board),
+    \+ win22(1,Board),
+    \+ win22(2,Board),
+    \+ win22(3,Board),
+    \+ win22(4,Board),
+    \+ win22(6,Board),
+    \+ win22(7,Board),
+    win22(8,Board).
 no_win2(0,Board) :-
     \+ win22(_,Board).
 
