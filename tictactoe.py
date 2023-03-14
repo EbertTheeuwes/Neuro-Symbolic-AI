@@ -1,7 +1,4 @@
 import torch
-from deepproblog.query import Query
-from problog.logic import Term, Constant
-
 from data import MNISTImages, AdditionDataset
 from deepproblog.dataset import DataLoader
 from deepproblog.engines import ExactEngine
@@ -15,8 +12,8 @@ network = MNIST_Net()
 net = Network(network, "mnist_net", batching=True)
 net.optimizer = torch.optim.Adam(network.parameters(), lr=1e-3)
 
-#model = Model("modelprob.pl", [net])
-model = Model("model01.pl", [net])
+model = Model("model.pl", [net])
+#model = Model("model01.pl", [net])
 model.set_engine(ExactEngine(model))
 model.add_tensor_source("train", MNISTImages("train"))
 model.add_tensor_source("test", MNISTImages("test"))
@@ -35,12 +32,12 @@ train.logger.comment(
 train.logger.comment(
     "Confusion Matrix {}".format(get_confusion_matrix(model, testset, verbose=1))
 )
-train.logger.comment(
-    "Fact accuracy {}".format(get_fact_accuracy(model, testset, verbose=1))
-)
-train.logger.comment(
-    "Fact accuracy {}".format(get_fact_accuracy(model, testset, verbose=1).accuracy())
-)
+#train.logger.comment(
+#    "Fact accuracy {}".format(get_fact_accuracy(model, testset, verbose=1))
+#)
+#train.logger.comment(
+#    "Fact accuracy {}".format(get_fact_accuracy(model, testset, verbose=1).accuracy())
+#)
 train.logger.write_to_file("log/" + 'test')
 
 # Query the model
@@ -50,20 +47,6 @@ for i in range(len(testset)):
     print(result)
 
 
-# code to see how queries are classified
-# query = testset.to_query(100)
-# result = model.solve([query])
-# print("result model right query", result)
-#
-# image1 = Term("tensor", Term(testset.subset, Constant(100 * 3)))
-# image2 = Term("tensor", Term(testset.subset, Constant(100 * 3 + 1)))
-# image3 = Term("tensor", Term(testset.subset, Constant(100 * 3 + 2)))
-#
-# label = Constant(int(1))
-# term = Term('check1x3grid', image1, image2, image3, label)
-# wrong_query = Query(term)
-# result_wrong = model.solve([wrong_query])[0]
-# print("result model wrong query", result_wrong)
 #query = dataset.to_query(0)
 #result = model.solve([query])[0]
 #print(result)
