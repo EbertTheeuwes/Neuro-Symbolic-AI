@@ -42,16 +42,6 @@ def train_sep_image_model():
             softmax = torch.nn.Softmax(0)
             norm_pred = softmax(pred)
 
-            # code to check if parameters actually change
-            if i == 13:
-                if epoch == 0:
-                    prevx = x
-                else:
-                    print("Same tensor as last epoch? ", torch.equal(prevx, x))
-
-
-                print("prediction for tensor 13: ", softmax(pred))
-
             if torch.argmax(y) == 1 == torch.argmax(norm_pred):
                 print("found example of 5 wins correctly classified", norm_pred)
 
@@ -141,4 +131,4 @@ def train_cat_image_model():
 
 
 
-train_cat_image_model()
+train_sep_image_model()
