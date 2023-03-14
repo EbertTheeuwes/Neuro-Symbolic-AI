@@ -210,6 +210,16 @@ def checkgrid2(row1, row2):
             return number
     return neutral_number
 
+def checkgrid23(row1, row2):
+    results = []
+    results += [checkgrid1(row1)]
+    results += [checkgrid1(row2)]
+    results += [checkgrid1([row1[0], row2[0]])]
+    results += [checkgrid1([row1[1], row2[1]])]
+    for number in numbers:
+        if number in results:
+            return number
+    return neutral_number
 
 def checkgrid3(row1, row2, row3):
     results = []

@@ -161,6 +161,19 @@ win22(Player,Board) :-
     Board = [ [_,Player], [Player,_]]
     ).
 
+% speciaal geval voor 2x3 grid met verticaal check
+win23(Player,Board) :-
+    players(Players),
+    member(Player,Players),
+    % controleer horizontale lijnen
+    (
+    Board = [ [Player,Player,Player], _, _ ];
+    Board = [ _, [Player,Player,Player], _ ];
+    % controleer verticale lijnen
+    Board = [ [Player,_,_], [Player,_,_], [_,_,_] ];
+    Board = [ [_,Player,_], [_,Player,_], [_,_,_] ]
+    ).
+
 % speciaal geval voor 4x4 grid
 win44(Player,Board) :-
     players(Players),
