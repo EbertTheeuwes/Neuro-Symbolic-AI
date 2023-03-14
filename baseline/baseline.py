@@ -13,7 +13,7 @@ def train_sep_image_model():
 
     trainingdata = TictactoeDatasetSep("train")
     network = NeuralbaselineSep()
-    adamopt = optim.Adam(network.parameters(), lr=0.000001, weight_decay=1e-2)
+    adamopt = optim.Adam(network.parameters(), lr=0.001)
     lossfunc = nn.CrossEntropyLoss()
     dl = DataLoader(trainingdata, batch_size=None)
 
@@ -39,6 +39,27 @@ def train_sep_image_model():
             if torch.argmax(pred) == torch.argmax(y):
                 running_correct += 1
 
+            softmax = torch.nn.Softmax(0)
+            norm_pred = softmax(pred)
+
+            # code to check if parameters actually change
+            if i == 13:
+                if epoch == 0:
+                    prevx = x
+                else:
+                    print("Same tensor as last epoch? ", torch.equal(prevx, x))
+
+
+                print("prediction for tensor 13: ", softmax(pred))
+
+            if torch.argmax(y) == 1 == torch.argmax(norm_pred):
+                print("found example of 5 wins correctly classified", norm_pred)
+
+            # if torch.argmax(y) == 1:
+            #     print("example where 5 wins")
+            #     if torch.argmax(norm_pred) == 1:
+            #         print("CORRECTLY CLASSIFIED")
+
             if total_iteration % 500 == 0:
                 avg_loss = running_loss/amount_examined
                 avg_accuracy = running_correct/amount_examined
@@ -57,7 +78,7 @@ def train_sep_image_model():
 def train_cat_image_model():
     trainingdata = TictactoeDatasetCat("train")
     network = NeuralbaselineCat()
-    adamopt = optim.Adam(network.parameters(), lr=0.000001, weight_decay=1e-2)
+    adamopt = optim.Adam(network.parameters(), lr=0.001)
     lossfunc = nn.CrossEntropyLoss()
     dl = DataLoader(trainingdata, batch_size=None)
 
@@ -97,6 +118,12 @@ def train_cat_image_model():
                 print("Epoch", epoch, " Iteration", i, " average loss = ", avg_loss)
                 print("Epoch", epoch, " Iteration", i, " accuracy ", avg_accuracy, "%")
 
+            softmax = torch.nn.Softmax(0)
+            norm_pred = softmax(pred)
+
+            if torch.argmax(y) == 1 == torch.argmax(norm_pred):
+                print("found example of 5 wins correctly classified", norm_pred)
+
     return network, avg_accuracies, avg_losses
 
 # code to check if parameters actually change
@@ -111,6 +138,7 @@ def train_cat_image_model():
 #     # plt.title("tensor 150")
 #     # plt.show()
 #     print("prediction for tensor 150", pred)
+
 
 
 train_cat_image_model()

@@ -26,7 +26,7 @@ class NeuralbaselineCat(nn.Module):
             nn.Linear(90,30),
             nn.ReLU(),
             nn.Linear(30, 3),
-            nn.Softmax(1),
+            # nn.Softmax(1),
         )
 
     def forward(self, x):
@@ -55,7 +55,7 @@ class NeuralbaselineSep(nn.Module):
             nn.Linear(140, 90),
             nn.ReLU(),
             nn.Linear(90, 3),
-            nn.Softmax(1),
+            # nn.Softmax(1),
         )
 
     def forward(self, x, y, z):

@@ -239,3 +239,25 @@ class TictactoeDatasetCat(Dataset):
 # plt.show()
 
 # test.print_images_of_winner(0)
+
+
+# code to find index at which example where 5 wins
+# test = TictactoeDatasetSep("train")
+# dl = DataLoader(test, batch_size=None)
+#
+# for i, (img, label) in enumerate(dl):
+#     if torch.argmax(label) == 1:
+#         print(img.shape)
+#         print("first example where 5 wins index: ", i)
+#         fig = plt.figure(figsize=(8, 8))
+#         fig.add_subplot(1, 3, 1)
+#         plt.imshow(img[0].squeeze())
+#         fig.add_subplot(1, 3, 2)
+#         plt.imshow(img[1].squeeze())
+#         fig.add_subplot(1, 3, 3)
+#         plt.imshow(img[2].squeeze())
+#         title = "example with winner " + str(5)
+#         plt.title(title)
+#         plt.show()
+#         break
+#
