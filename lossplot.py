@@ -2,6 +2,8 @@ import matplotlib.pylab as plt
 
 iterations = []
 avg_losses = []
+times = []
+prev_time = 0
 
 data = """Iteration:  100 	s:18.9899 	Average Loss:  0.637992275506258
 Iteration:  200 	s:18.4960 	Average Loss:  0.31234880272633747
@@ -26,9 +28,18 @@ for line in data.split("\n"):
     parts = line.split()
     iterations.append(int(parts[1]))
     avg_losses.append(float(parts[5]))
+    curr_time = float(parts[2][2:]) + prev_time  # Extract the current training time
+    times.append(curr_time)  # Calculate the time difference
+    prev_time = curr_time
 
 plt.plot(iterations, avg_losses)
 plt.title("Loss as a function of training iterations")
 plt.xlabel("training iterations")
 plt.ylabel("cross entropy loss")
+plt.show()
+
+plt.plot(times, avg_losses)
+plt.xlabel('Training Time (s)')
+plt.ylabel('Average Loss')
+plt.title('Average Loss vs Training Time')
 plt.show()
