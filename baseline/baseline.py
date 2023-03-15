@@ -6,6 +6,7 @@ import torchvision
 from network import NeuralbaselineCat, NeuralbaselineSep, NeuralbaselineSep2x3, NeuralbaselineSep3x3
 from torch.utils.data import Dataset, DataLoader
 import matplotlib.pyplot as plt
+import time
 
 
 def train_sep_image_model():
@@ -21,6 +22,7 @@ def train_sep_image_model():
     amount_examined = 0
     avg_losses = []
     avg_accuracies = []
+    iterations = []
     total_iteration = 0
 
     for epoch in range(0, 10):
@@ -41,19 +43,20 @@ def train_sep_image_model():
             softmax = torch.nn.Softmax(0)
             norm_pred = softmax(pred)
 
-            if torch.argmax(y) == 1 == torch.argmax(norm_pred):
-                print("found example of 5 wins correctly classified", norm_pred)
+            # if torch.argmax(y) == 1 == torch.argmax(norm_pred):
+            #    print("found example of 5 wins correctly classified", norm_pred)
 
             # if torch.argmax(y) == 1:
             #     print("example where 5 wins")
             #     if torch.argmax(norm_pred) == 1:
             #         print("CORRECTLY CLASSIFIED")
 
-            if total_iteration % 500 == 0:
+            if total_iteration % 100 == 0:
                 avg_loss = running_loss/amount_examined
                 avg_accuracy = running_correct/amount_examined
                 avg_losses.append(avg_loss)
                 avg_accuracies.append(avg_accuracy)
+                iterations.append(total_iteration)
 
                 amount_examined = 0
                 running_loss = 0
@@ -62,7 +65,7 @@ def train_sep_image_model():
                 print("Epoch", epoch, " Iteration", i, " average loss = ", avg_loss)
                 print("Epoch", epoch, " Iteration", i, " accuracy ", avg_accuracy, "%")
 
-    return network, avg_accuracies, avg_losses
+    return network, avg_accuracies, avg_losses, iterations
 
 def train_cat_image_model():
     trainingdata = TictactoeDatasetCat("train")
@@ -76,6 +79,7 @@ def train_cat_image_model():
     amount_examined = 0
     avg_losses = []
     avg_accuracies = []
+    iterations = []
     total_iteration = 0
 
     for epoch in range(0, 10):
@@ -94,11 +98,12 @@ def train_cat_image_model():
             if torch.argmax(pred) == torch.argmax(y):
                 running_correct += 1
 
-            if total_iteration % 500 == 0:
+            if total_iteration % 100 == 0:
                 avg_loss = running_loss / amount_examined
                 avg_accuracy = running_correct / amount_examined
                 avg_losses.append(avg_loss)
                 avg_accuracies.append(avg_accuracy)
+                iterations.append(total_iteration)
 
                 amount_examined = 0
                 running_loss = 0
@@ -110,8 +115,8 @@ def train_cat_image_model():
             softmax = torch.nn.Softmax(0)
             norm_pred = softmax(pred)
 
-            if torch.argmax(y) == 1 == torch.argmax(norm_pred):
-                print("found example of 5 wins correctly classified", norm_pred)
+            # if torch.argmax(y) == 1 == torch.argmax(norm_pred):
+            #     print("found example of 5 wins correctly classified", norm_pred)
 
     return network, avg_accuracies, avg_losses
 
@@ -141,9 +146,17 @@ def train_sep_image_model_2x3():
     amount_examined = 0
     avg_losses = []
     avg_accuracies = []
+    iterations = []
     total_iteration = 0
+    times = []
 
+    first_time = time.time()
     for epoch in range(0, 10):
+        if epoch == 1:
+            test_set = TictactoeDatasetSep2x3("test")
+            accuracy, confusion_matrix = test_sep_img_network(network, test_set)
+            print("accuracy after one epoch ", accuracy)
+
         for i, (x, y) in enumerate(dl):
             adamopt.zero_grad()
             pred = network(x[0], x[1], x[2], x[3], x[4], x[5])
@@ -160,19 +173,23 @@ def train_sep_image_model_2x3():
             softmax = torch.nn.Softmax(0)
             norm_pred = softmax(pred)
 
-            if torch.argmax(y) == 1 == torch.argmax(norm_pred):
-                print("found example of 5 wins correctly classified", norm_pred)
+            # if torch.argmax(y) == 1 == torch.argmax(norm_pred):
+            #     print("found example of 5 wins correctly classified", norm_pred)
 
             # if torch.argmax(y) == 1:
             #     print("example where 5 wins")
             #     if torch.argmax(norm_pred) == 1:
             #         print("CORRECTLY CLASSIFIED")
 
-            if total_iteration % 500 == 0:
+            if total_iteration % 100 == 0:
                 avg_loss = running_loss/amount_examined
                 avg_accuracy = running_correct/amount_examined
                 avg_losses.append(avg_loss)
                 avg_accuracies.append(avg_accuracy)
+                iterations.append(total_iteration)
+                current_time = time.time()
+                relative_time = current_time - first_time
+                times.append(relative_time)
 
                 amount_examined = 0
                 running_loss = 0
@@ -181,7 +198,7 @@ def train_sep_image_model_2x3():
                 print("Epoch", epoch, " Iteration", i, " average loss = ", avg_loss)
                 print("Epoch", epoch, " Iteration", i, " accuracy ", avg_accuracy, "%")
 
-    return network, avg_accuracies, avg_losses
+    return network, avg_accuracies, avg_losses, iterations, times
 
 def train_sep_image_model_3x3():
 
@@ -196,6 +213,7 @@ def train_sep_image_model_3x3():
     amount_examined = 0
     avg_losses = []
     avg_accuracies = []
+    iterations = []
     total_iteration = 0
 
     for epoch in range(0, 20):
@@ -223,11 +241,12 @@ def train_sep_image_model_3x3():
             #     if torch.argmax(norm_pred) == 1:
             #         print("CORRECTLY CLASSIFIED")
 
-            if total_iteration % 500 == 0:
+            if total_iteration % 100 == 0:
                 avg_loss = running_loss/amount_examined
                 avg_accuracy = running_correct/amount_examined
                 avg_losses.append(avg_loss)
                 avg_accuracies.append(avg_accuracy)
+                iterations.append(total_iteration)
 
                 amount_examined = 0
                 running_loss = 0
@@ -236,8 +255,50 @@ def train_sep_image_model_3x3():
                 print("Epoch", epoch, " Iteration", i, " average loss = ", avg_loss)
                 print("Epoch", epoch, " Iteration", i, " accuracy ", avg_accuracy, "%")
 
-    return network, avg_accuracies, avg_losses
+    return network, avg_accuracies, avg_losses, iterations
 
 
-train_sep_image_model_3x3()
+def test_sep_img_network(network, test_set):
+    dl = DataLoader(test_set, batch_size=None)
+                # Actual 0  5  9
+    confusion_matrix = [[0, 0, 0], # Pred 0
+                        [0, 0, 0], # Pred 5
+                        [0, 0, 0]] # Pred 9
+    correct = 0
+    total = 0
+
+    for i, (x, y) in enumerate(dl):
+        pred = network(x[0], x[1], x[2], x[3], x[4], x[5]) # adapt to current grid
+        row = torch.argmax(pred)
+        index = torch.argmax(y)
+        confusion_matrix[row][index] += 1
+
+        if row == index:
+            correct += 1
+        total += 1
+
+    accuracy = correct/total
+    return accuracy, confusion_matrix
+
+
+network, avg_accuracies, avg_losses, iterations, times = train_sep_image_model_2x3()
+plt.plot(iterations, avg_losses)
+plt.title("Loss as a function of training iterations")
+plt.xlabel("training iterations")
+plt.ylabel("cross entropy loss")
+plt.show()
+
+plt.plot(times, avg_losses)
+plt.title("Loss as a function of time")
+plt.xlabel("time")
+plt.ylabel("cross entropy loss")
+plt.show()
+
+
+test_set = TictactoeDatasetSep2x3("test")
+accuracy, confusion_matrix = test_sep_img_network(network, test_set)
+print("Accuracy = ", accuracy)
+print("Confusion matrix", confusion_matrix)
+
+
 

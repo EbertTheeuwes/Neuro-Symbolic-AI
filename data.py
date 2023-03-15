@@ -2,7 +2,7 @@ from typing import Mapping, Iterator
 import torch
 import torchvision
 import torchvision.transforms as transforms
-from problog.logic import Term, Constant
+from problog.logic import Term, Constant, Var
 from deepproblog.dataset import Dataset
 from deepproblog.query import Query
 import random
@@ -43,8 +43,8 @@ def get_testset(numbers, neutral):
 
 
 datasets = {
-    "train": get_trainset(numbers + [neutral_number], neutral_number),
-    "test": get_testset(numbers + [neutral_number], neutral_number),
+    "train": get_trainset(numbers, neutral_number),
+    "test": get_testset(numbers, neutral_number),
 }
 
 
@@ -72,7 +72,7 @@ class AdditionDataset(Dataset):
         self.dataset = datasets[subset]
 
     def __len__(self):
-        return len(self.dataset) - 2
+        return len(self.dataset) // 3
 
     def query1x3(self, i: int):
         #image1 = Term("tensor", Term(self.subset, Constant(i * 3)))
@@ -81,11 +81,11 @@ class AdditionDataset(Dataset):
         #label = Constant(checkgrid1(
         #    [int(self.dataset[i * 3][1]), int(self.dataset[i * 3 + 1][1]), int(self.dataset[i * 3 + 2][1])]))
         #term = Term('check1x3grid', image1, image2, image3, label)
-        image1 = Term("tensor", Term(self.subset, Constant(i)))
-        image2 = Term("tensor", Term(self.subset, Constant(i + 1)))
-        image3 = Term("tensor", Term(self.subset, Constant(i + 2)))
+        image1 = Term("tensor", Term(self.subset, Constant(i*3)))
+        image2 = Term("tensor", Term(self.subset, Constant(i*3 + 1)))
+        image3 = Term("tensor", Term(self.subset, Constant(i*3 + 2)))
         label = Constant(checkgrid1(
-            [int(self.dataset[i][1]), int(self.dataset[i + 1][1]), int(self.dataset[i + 2][1])]))
+            [int(self.dataset[i*3][1]), int(self.dataset[i*3 + 1][1]), int(self.dataset[i*3 + 2][1])]))
         term = Term('check1x3grid', image1, image2, image3, label)
         return Query(term)
 
@@ -191,6 +191,21 @@ class AdditionDataset(Dataset):
         # return self.query2x2(i)
         # return self.query3x3(i)
         #return self.query4x4(i)
+
+    def test_query_1x3(self, i):
+        image1 = Term("tensor", Term(self.subset, Constant(i*3)))
+        image2 = Term("tensor", Term(self.subset, Constant(i*3 + 1)))
+        image3 = Term("tensor", Term(self.subset, Constant(i*3 + 2)))
+
+        winner = Var('winner')
+        term = Term('check1x3grid', image1, image2, image3, winner)
+        query = Query(term)
+        actual_winner = checkgrid1(
+            [int(self.dataset[i * 3][1]), int(self.dataset[i * 3 + 1][1]), int(self.dataset[i * 3 + 2][1])])
+        return query, actual_winner
+
+    def get_test_query(self, i):
+        return self.test_query_1x3(i)
 
 
 # grid is van vorm: [A1,A2,A3]
